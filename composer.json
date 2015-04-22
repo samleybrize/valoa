@@ -1,0 +1,25 @@
+{
+    "name": "samleybrize/valoa",
+    "type": "library",
+    "description": "Helper to make value objects with type validation",
+    "homepage": "https://github.com/samleybrize/valoa",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stephen Berquet",
+            "email": "stephen.berquet@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/samleybrize/valoa/issues",
+        "source": "https://github.com/samleybrize/valoa"
+    },
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-0": {
+            "Samleybrize\\Valoa\\": "src/"
+        }
+    }
+}
