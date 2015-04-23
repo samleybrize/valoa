@@ -21,6 +21,18 @@ trait ValueObjectTrait
     );
 
     /**
+     * Primitive type list
+     * @var array
+     */
+    private static $valueObjectPrimitives = array(
+        "string",
+        "integer",
+        "float",
+        "boolean",
+        "any",
+    );
+
+    /**
      * Validators list
      * @var \Samleybrize\Valoa\ValueObject\Validator\ValidatorInterface[]
      */
@@ -50,11 +62,20 @@ trait ValueObjectTrait
 
             // determine required data type
             $tags       = $docParser->parse($property->getDocComment());
-            $type       = array_key_exists("var", $tags) ? $tags["var"][0] : "any";
-            $type       = array_key_exists("type", $tags) ? $tags["type"][0] : $type;
+            $var        = array_key_exists("var", $tags) ? $tags["var"][0] : "any";
+            $type       = array_key_exists("type", $tags) ? $tags["type"][0] : $var;
 
             if ($type && array_key_exists($type, self::$valueObjectTypeMapper)) {
                 $type = self::$valueObjectTypeMapper[$type];
+            }
+
+            if ($var && array_key_exists($var, self::$valueObjectTypeMapper)) {
+                $var = self::$valueObjectTypeMapper[$var];
+            }
+
+            if (!in_array($var, self::$valueObjectPrimitives)) {
+                $tags["classname"]  = $var;
+                $type               = "object";
             }
 
             // instanciate validator
