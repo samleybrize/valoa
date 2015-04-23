@@ -14,8 +14,8 @@ trait ValueObjectTrait
         "String"    => "string",
         "long"      => "integer",
         "int"       => "integer",
-        "number"    => "double",
-        "float"     => "double",
+        "number"    => "float",
+        "double"    => "float",
         "bool"      => "boolean",
         "mixed"     => "any",
     );
