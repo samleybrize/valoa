@@ -16,7 +16,7 @@ class ValidatorEmail implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(&$value, $strict = false)
+    public function isValid(&$value)
     {
         if (false === filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $givenType  = ("object" == gettype($value)) ? get_class($value) : gettype($value);

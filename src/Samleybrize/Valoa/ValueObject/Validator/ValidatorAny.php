@@ -16,7 +16,7 @@ class ValidatorAny implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(&$value, $strict = false)
+    public function isValid(&$value)
     {
         return true;
     }

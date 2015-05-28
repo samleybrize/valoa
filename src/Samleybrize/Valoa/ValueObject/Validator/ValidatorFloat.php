@@ -7,6 +7,12 @@ use Samleybrize\Valoa\ValueObject\ValueObjectException;
 class ValidatorFloat implements ValidatorInterface
 {
     /**
+     * Indicates if validation is strict
+     * @var boolean
+     */
+    private $isStrict = false;
+
+    /**
      * Min value
      * @var float
      */
@@ -23,6 +29,10 @@ class ValidatorFloat implements ValidatorInterface
      */
     public function __construct(array $tags = array())
     {
+        if (array_key_exists("strict", $tags)) {
+            $this->isStrict = true;
+        }
+
         if (array_key_exists("min", $tags)) {
             $this->min = is_numeric($tags["min"][0]) ? (float) $tags["min"][0] : null;
         }
@@ -35,9 +45,9 @@ class ValidatorFloat implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(&$value, $strict = false)
+    public function isValid(&$value)
     {
-        if ($strict && !is_float($value)) {
+        if ($this->isStrict && !is_float($value)) {
             // strict validation failed
             $givenType = ("object" == gettype($value)) ? get_class($value) : gettype($value);
             throw new ValueObjectException("Float expected, [$givenType] given");

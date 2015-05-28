@@ -7,6 +7,12 @@ use Samleybrize\Valoa\ValueObject\ValueObjectException;
 class ValidatorString implements ValidatorInterface
 {
     /**
+     * Indicates if validation is strict
+     * @var boolean
+     */
+    private $isStrict = false;
+
+    /**
      * Min length
      * @var int
      */
@@ -29,6 +35,10 @@ class ValidatorString implements ValidatorInterface
      */
     public function __construct(array $tags = array())
     {
+        if (array_key_exists("strict", $tags)) {
+            $this->isStrict = true;
+        }
+
         if (array_key_exists("minLength", $tags)) {
             $this->minLength = is_numeric($tags["minLength"][0]) ? (int) $tags["minLength"][0] : null;
         }
@@ -45,9 +55,9 @@ class ValidatorString implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(&$value, $strict = false)
+    public function isValid(&$value)
     {
-        if ($strict && !is_string($value)) {
+        if ($this->isStrict && !is_string($value)) {
             // strict validation failed
             $givenType = ("object" == gettype($value)) ? get_class($value) : gettype($value);
             throw new ValueObjectException("String expected, [$givenType] given");

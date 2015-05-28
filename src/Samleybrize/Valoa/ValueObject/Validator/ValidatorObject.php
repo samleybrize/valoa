@@ -36,7 +36,7 @@ class ValidatorObject implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(&$value, $strict = false)
+    public function isValid(&$value)
     {
         if ($this->isAbsolute) {
             // absolute classname
