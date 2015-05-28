@@ -25,9 +25,11 @@ class ValidatorObject implements ValidatorInterface
     {
         if (!array_key_exists("classname", $tags)) {
             throw new ValueObjectException("Tag list must have a 'classname' tag");
+        } elseif (!is_string($tags["classname"][0])) {
+            throw new ValueObjectException("Tag 'classname' must be a string");
         }
 
-        $this->classname    = $tags["classname"];
+        $this->classname    = $tags["classname"][0];
         $this->isAbsolute   = false !== strpos($this->classname, "\\");
     }
 
