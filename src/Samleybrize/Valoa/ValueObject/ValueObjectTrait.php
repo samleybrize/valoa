@@ -3,6 +3,7 @@
 namespace Samleybrize\Valoa\ValueObject;
 
 use Samleybrize\Valoa\AnnotationParser;
+use Samleybrize\Valoa\ValueObject\Validator\ValidatorInterface;
 
 trait ValueObjectTrait
 {
@@ -63,10 +64,14 @@ trait ValueObjectTrait
             // determine required data type
             $tags       = $docParser->parse($property->getDocComment());
             $var        = array_key_exists("var", $tags) ? $tags["var"][0] : "any";
-            $type       = array_key_exists("type", $tags) ? $tags["type"][0] : $var;
+            $validator  = array_key_exists("validator", $tags) ? $tags["validator"][0] : null;
 
-            if ($type && array_key_exists($type, self::$valueObjectTypeMapper)) {
-                $type = self::$valueObjectTypeMapper[$type];
+            if (empty($validator)) {
+                $validator = $var;
+            }
+
+            if ($validator && array_key_exists($validator, self::$valueObjectTypeMapper)) {
+                $validator = self::$valueObjectTypeMapper[$validator];
             }
 
             if ($var && array_key_exists($var, self::$valueObjectTypeMapper)) {
@@ -74,19 +79,29 @@ trait ValueObjectTrait
             }
 
             if (!in_array($var, self::$valueObjectPrimitives)) {
-                $tags["classname"]  = $var;
-                $type               = "object";
+                $tags["classname"]  = array($var);
+                $validator          = "object";
             }
 
             // instanciate validator
-            $classname = __NAMESPACE__ . "\\Validator\\Validator" . ucfirst($type);
+            $classname      = __NAMESPACE__ . "\\Validator\\Validator" . ucfirst($validator);
+            $builtinExists  = class_exists($classname);
+            $customExists   = class_exists($validator);
 
-            if (!class_exists($classname)) {
-                throw new ValueObjectException("'$type' does not name a validator");
+            if (!$builtinExists && !$customExists) {
+                throw new ValueObjectException("'$validator' does not name a validator");
             }
 
             $propertyName                               = $property->getName();
-            self::$valueObjectValidators[$propertyName] = new $classname($tags);
+            $validatorObject                            = $builtinExists ? new $classname($tags) : new $validator($tags);
+
+            if (!$validatorObject instanceof ValidatorInterface) {
+                $class      = get_class($validatorObject);
+                $interface  = __NAMESPACE__ . "\\Validator\\ValidatorInterface";
+                throw new ValueObjectException("Class '$class' does not implements '$interface'");
+            }
+
+            self::$valueObjectValidators[$propertyName] = $validatorObject;
         }
     }
 
