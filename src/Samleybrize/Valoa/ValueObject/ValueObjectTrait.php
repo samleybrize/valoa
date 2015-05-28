@@ -65,12 +65,16 @@ trait ValueObjectTrait
             }
 
             // TODO recursive type? (eg: string[][])
-            // TODO @immutable tag
             // retrieve main tags
             $tags       = $docParser->parse($property->getDocComment());
             $var        = array_key_exists("var", $tags) ? $tags["var"][0] : "any";
             $validator  = array_key_exists("validator", $tags) ? $tags["validator"][0] : null;
             $isArray    = false;
+
+            // handle immutable property
+            if (array_key_exists("immutable", $tags)) {
+                $validator = "immutable";
+            }
 
             // handle array types
             if ("[]" == substr($var, -2)) {
