@@ -24,11 +24,11 @@ class ValidatorInteger implements ValidatorInterface
     public function __construct(array $tags = array())
     {
         if (array_key_exists("min", $tags)) {
-            $this->min = is_numeric($tags["min"]) ? (int) $tags["min"] : null;
+            $this->min = is_numeric($tags["min"][0]) ? (int) $tags["min"][0] : null;
         }
 
         if (array_key_exists("max", $tags)) {
-            $this->max = is_numeric($tags["max"]) ? (int) $tags["max"] : null;
+            $this->max = is_numeric($tags["max"][0]) ? (int) $tags["max"][0] : null;
         }
     }
 

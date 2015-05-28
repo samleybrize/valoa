@@ -29,16 +29,16 @@ class ValidatorString implements ValidatorInterface
      */
     public function __construct(array $tags = array())
     {
-        if (array_key_exists("min-length", $tags)) {
-            $this->minLength = is_numeric($tags["min-length"]) ? (int) $tags["min-length"] : null;
+        if (array_key_exists("minLength", $tags)) {
+            $this->minLength = is_numeric($tags["minLength"][0]) ? (int) $tags["minLength"][0] : null;
         }
 
-        if (array_key_exists("max-length", $tags)) {
-            $this->maxLength = is_numeric($tags["max-length"]) ? (int) $tags["max-length"] : null;
+        if (array_key_exists("maxLength", $tags)) {
+            $this->maxLength = is_numeric($tags["maxLength"][0]) ? (int) $tags["maxLength"][0] : null;
         }
 
         if (array_key_exists("regex", $tags)) {
-            $this->regex = is_numeric($tags["regex"]) ? (int) $tags["regex"] : null;
+            $this->regex = is_string($tags["regex"][0]) ? "#{$tags["regex"][0]}#" : null; // TODO what if the regex contains # chars?
         }
     }
 
@@ -67,7 +67,7 @@ class ValidatorString implements ValidatorInterface
             throw new ValueObjectException("String value must contain at most $this->maxLength characters, it contains $length");
         } elseif (null !== $this->regex && !preg_match($this->regex, $value)) {
             // regex validation failed
-            throw new ValueObjectException("Invalid value. Must match the regex '$this->_regex'");
+            throw new ValueObjectException("Invalid value. Must match the regex '$this->regex'");
         }
 
         $value = (string) $value;
