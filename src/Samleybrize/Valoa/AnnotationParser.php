@@ -4,7 +4,11 @@ namespace Samleybrize\Valoa;
 
 class AnnotationParser
 {
-    // TODO
+    /**
+     * Parses doc comment
+     * @param string $docComment
+     * @return array
+     */
     public function parse($docComment)
     {
         $matchedAnnotations = array();
@@ -23,7 +27,7 @@ class AnnotationParser
         $annotationList = array();
 
         foreach ($matchedAnnotations as $matchedAnnotation) {
-            $name   = strtolower($matchedAnnotation[1]);
+            $name   = $matchedAnnotation[1];
             $val    = true;
 
             // process annotation value, if any
@@ -56,7 +60,11 @@ class AnnotationParser
         return $annotationList;
     }
 
-    // TODO
+    /**
+     * Parses an annotation value
+     * @param string $value
+     * @return mixed
+     */
     private function parseValue($value)
     {
         $val        = trim($value);
