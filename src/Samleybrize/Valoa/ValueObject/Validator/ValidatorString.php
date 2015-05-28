@@ -47,8 +47,10 @@ class ValidatorString implements ValidatorInterface
             $this->maxLength = is_numeric($tags["maxLength"][0]) ? (int) $tags["maxLength"][0] : null;
         }
 
-        if (array_key_exists("regex", $tags)) {
-            $this->regex = is_string($tags["regex"][0]) ? "#{$tags["regex"][0]}#" : null; // TODO what if the regex contains # chars?
+        if (array_key_exists("regex", $tags) && is_string($tags["regex"][0])) {
+            $this->regex = $tags["regex"][0];
+            $this->regex = str_replace("#", "\\#", $this->regex);
+            $this->regex = "#{$this->regex}#";
         }
     }
 
