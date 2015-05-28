@@ -3,6 +3,7 @@
 namespace Samleybrize\Valoa\ValueObject;
 
 use Samleybrize\Valoa\AnnotationParser;
+use Samleybrize\Valoa\ValueObject\Validator\ValidatorArray;
 use Samleybrize\Valoa\ValueObject\Validator\ValidatorInterface;
 
 trait ValueObjectTrait
@@ -19,6 +20,7 @@ trait ValueObjectTrait
         "double"    => "float",
         "bool"      => "boolean",
         "mixed"     => "any",
+        "Array"     => "array",
     );
 
     /**
@@ -30,6 +32,7 @@ trait ValueObjectTrait
         "integer",
         "float",
         "boolean",
+        "array",
         "any",
     );
 
@@ -61,11 +64,24 @@ trait ValueObjectTrait
                 continue;
             }
 
-            // determine required data type
+            // TODO recursive type? (eg: string[][])
+            // TODO @immutable tag
+            // retrieve main tags
             $tags       = $docParser->parse($property->getDocComment());
             $var        = array_key_exists("var", $tags) ? $tags["var"][0] : "any";
             $validator  = array_key_exists("validator", $tags) ? $tags["validator"][0] : null;
+            $isArray    = false;
 
+            // handle array types
+            if ("[]" == substr($var, -2)) {
+                $isArray    = true;
+                $var        = substr($var, 0, -2);
+            } elseif ("array" == $var || "Array" == $var) {
+                $isArray    = true;
+                $var        = "any";
+            }
+
+            // determine required data type
             if (empty($validator)) {
                 $validator = $var;
             }
@@ -78,7 +94,7 @@ trait ValueObjectTrait
                 $var = self::$valueObjectTypeMapper[$var];
             }
 
-            if (!in_array($var, self::$valueObjectPrimitives)) {
+            if (!in_array($var, self::$valueObjectPrimitives) && $validator === $var) {
                 $tags["classname"]  = array($var);
                 $validator          = "object";
             }
@@ -99,6 +115,11 @@ trait ValueObjectTrait
                 $class      = get_class($validatorObject);
                 $interface  = __NAMESPACE__ . "\\Validator\\ValidatorInterface";
                 throw new ValueObjectException("Class '$class' does not implements '$interface'");
+            }
+
+            // create array validator
+            if ($isArray) {
+                $validatorObject = new ValidatorArray(array("validator" => $validatorObject));
             }
 
             self::$valueObjectValidators[$propertyName] = $validatorObject;
