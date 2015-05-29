@@ -26,6 +26,8 @@ class EntityTest
 $test       = new EntityTest();
 $test->var1 = 23;
 $test->var2 = "message";
+
+echo $test->var2;
 ```
 
 Additionally, you can define constraints to your properties. On the example above, `$var1` only accepts integer values, as specified by the `@var` tag.
@@ -122,7 +124,44 @@ to be written
 
 ### Write your own validator
 
-to be written
+Custom validators can be created by implementing the `Samleybrize\Valoa\ValueObject\Validator\ValidatorInterface` interface.
+
+```php
+namespace Your\Namespace;
+
+use Samleybrize\Valoa\ValueObject\Validator\ValidatorInterface;
+
+class CustomValidator implements ValidatorInterface
+{
+    // $tags contains all doc comment tags
+    public function __construct(array $tags = array())
+    {
+        // ...
+    }
+
+    public function isValid(&$value)
+    {
+        // ...
+    }
+}
+```
+
+To use it, you have to specify the full class name on the `@validator` tag.
+
+```php
+use Samleybrize\Valoa\ValueObject\ValueObjectTrait;
+
+class EntityTest
+{
+    use ValueObjectTrait;
+
+    /**
+     * @var string
+     * @validator \Your\Namespace\CustomValidator
+     */
+    private $var1;
+}
+```
 
 ## Installation
 
