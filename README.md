@@ -116,6 +116,10 @@ $test       = new EntityTest();
 $test->var1 = "text"; // will raise an exception
 ```
 
+### Immutable class
+
+to be written
+
 ### Nullable property
 
 to be written
