@@ -66,6 +66,16 @@ trait ValueObjectTrait
         $class                          = new \ReflectionClass($this);
         $propertyList                   = $class->getProperties();
         $docParser                      = new AnnotationParser();
+        $immutable                      = false;
+
+        // handle immutable class
+        $classTags = $docParser->parse($class->getDocComment());
+
+        if (array_key_exists("immutable", $classTags)) {
+            $immutable = $this->loadValueObjectValidator(array(
+                "validator" => array("immutable")
+            ));
+        }
 
         // properties
         foreach ($propertyList as $property) {
@@ -77,7 +87,7 @@ trait ValueObjectTrait
             // create validator
             $tags                                       = $docParser->parse($property->getDocComment());
             $propertyName                               = $property->getName();
-            self::$valueObjectValidators[$propertyName] = $this->loadValueObjectValidator($tags);
+            self::$valueObjectValidators[$propertyName] = !$immutable ? $this->loadValueObjectValidator($tags) : $immutable;
         }
     }
 
