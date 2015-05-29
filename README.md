@@ -1,5 +1,15 @@
 # Valoa - Easy value objects and entities
 
+## Installation
+
+For a quick install with [Composer](https://getcomposer.org) use :
+
+    $ composer require samleybrize/bugzorcist
+
+## Requirements
+
+- PHP 5.4+
+
 ## Usage
 
 Traditionnaly, when you build value objects (or entities), you define properties as private and then you create a getter (and maybe a setter) for each of them.
@@ -116,13 +126,60 @@ $test       = new EntityTest();
 $test->var1 = "text"; // will raise an exception
 ```
 
-### Immutable class
+You can make all properties immutable at once by setting the `@immutable` tag on the class.
 
-to be written
+```php
+/**
+ * @immutable
+ */
+class EntityTest
+{
+    use ValueObjectTrait;
+
+    /**
+     * @var string
+     */
+    private $var1;
+
+    /**
+     * @var boolean
+     */
+    private $var2;
+}
+
+$test       = new EntityTest();
+$test->var1 = "text"; // will raise an exception
+$test->var2 = true; // will raise an exception
+```
 
 ### Nullable property
 
-to be written
+A property can accept a `null` value with the `@nullable` tag.
+
+```php
+class EntityTest
+{
+    use ValueObjectTrait;
+
+    /**
+     * @var string
+     */
+    private $var1;
+
+    /**
+     * @var string
+     * @nullable
+     */
+    private $var2;
+}
+
+$test       = new EntityTest();
+$test->var1 = "text"; // ok
+$test->var1 = null; // will raise an exception
+
+$test->var2 = "text"; // ok
+$test->var2 = null; // ok
+```
 
 ### Array types
 
@@ -304,17 +361,48 @@ class EntityTest
 
 ### Lazy loaders
 
-to be written
+Sometimes you want to retrieve some data on demand. All properties accept an instance of the `Samleybrize\Valoa\ValueObject\ValueObjectLazyLoaderInterface` interface
+regardless of its associated validator. When you first try to get its value, the lazy loader is used to retrieve the effective value
+and validates it using the validator. Next times, the lazy loader is no longer used.
 
-## Installation
+```php
+use Samleybrize\Valoa\ValueObject\ValueObjectLazyLoaderInterface;
+use Samleybrize\Valoa\ValueObject\ValueObjectTrait;
 
-For a quick install with [Composer](https://getcomposer.org) use :
+class Test
+{
+    /**
+     * @var string
+     */
+    private $var;
+}
 
-    $ composer require samleybrize/bugzorcist
+class LazyLoaderString implements ValueObjectLazyLoaderInterface
+{
+    public function load()
+    {
+        // retrieve the value from a database for example
+        return "text";
+    }
+}
 
-## Requirements
+class LazyLoaderInteger implements ValueObjectLazyLoaderInterface
+{
+    public function load()
+    {
+        // retrieve the value from a database for example
+        return 12;
+    }
+}
 
-- PHP 5.4+
+$test       = new EntityTest();
+
+$test->var  = new LazyLoaderString();
+echo $test->var; // outputs "text"
+
+$test->var  = new LazyLoaderInteger();
+echo $test->var; // raise an exception
+```
 
 ## Known limitations
 
