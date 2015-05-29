@@ -117,10 +117,83 @@ $test->var1 = "text"; // will raise an exception
 ### Array types
 
 to be written
+@var string[]
+@var string[][]
+@var array, @validator string
+
+Array types can be specified in several ways. The simplest method is to add `[]` to the tag. This way you can also validate multidimensional arrays,
+by adding as many `[]` as you want.
+
+```php
+/**
+ * Array of string
+ * @var string[]
+ */
+private $var1;
+
+/**
+ * Array of DateTime objects
+ * @var \DateTime[]
+ */
+private $var2;
+
+/**
+ * Array of array of string
+ * @var string[][]
+ */
+private $var1;
+```
+
+The other way of specifying array types is `@var array` and `@validator` setted to the underlying type. If there is no `@validator` tag, the validator `any`
+is used by default. This method does not allow to validate multidimensional arrays.
+
+```php
+/**
+ * Array of string
+ * @var array
+ * @validator string
+ */
+private $var1;
+
+/**
+ * Array of DateTime objects
+ * @var array
+ * @validator \DateTime
+ */
+private $var2;
+```
+
+### Enum validator
+
+to be written
+
+### Class constants validator
+
+to be written
 
 ### Validator list
 
-to be written
+| Validator         | Options     | Description                             | Non strict       |
+|-------------------|-------------|-----------------------------------------|------------------|
+| Any               |             | Allow any value                         |                  |
+| Boolean           |             | Allow boolean values                    | Any scalar value |
+| ClassConstants    |             | Allow constants values of a given class | Any scalar value |
+|                   | `beginWith` | Filter constant names                   |                  |
+|                   | `endWith`   | Filter constant names                   |                  |
+|                   | `contain`   | Filter constant names                   |                  |
+| Email             |             | Allow email adresses                    |                  |
+| Enum              |             | Allow a predefined list of values       | Any scalar value |
+| Float             |             | Allow decimal values                    | Any scalar value |
+|                   | `min`       | Min valid value                         |                  |
+|                   | `max`       | Max valid value                         |                  |
+| Integer           |             | Allow integer values                    | Any scalar value |
+|                   | `min`       | Min valid value                         |                  |
+|                   | `max`       | Max valid value                         |                  |
+| Ip                |             | Allow IP addresses                      |                  |
+| String            |             | Allow strings                           | Any scalar value |
+|                   | `minLength` | Min valid string length                 |                  |
+|                   | `maxLength` | Max valid string length                 |                  |
+|                   | `regex`     | Validation regex (ex: ^[0-9]+$)         |                  |
 
 ### Write your own validator
 
