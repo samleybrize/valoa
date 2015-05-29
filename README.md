@@ -116,6 +116,10 @@ $test       = new EntityTest();
 $test->var1 = "text"; // will raise an exception
 ```
 
+### Nullable property
+
+to be written
+
 ### Array types
 
 Array types can be specified in several ways. The simplest method is to add `[]` to the tag. This way you can also validate multidimensional arrays,
