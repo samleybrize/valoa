@@ -164,6 +164,14 @@ trait ValueObjectTrait
     /**
      * {@inheritdoc}
      */
+    public function __isset($name)
+    {
+        return array_key_exists($name, self::$valueObjectValidators);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __get($name)
     {
         if (!array_key_exists($name, self::$valueObjectValidators)) {
