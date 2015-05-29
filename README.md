@@ -65,7 +65,9 @@ $test->var1 = "23text"; // will raise an exception
 ### Define the validator used
 
 By default, the `@var` tag define which validator will be used. If for somme reason you need to put some funky value into that tag, you have to specify
-the validator with the `@validator` tag. If you don't want any validation on a property, use the `any` validator.
+the validator with the `@validator` tag. If there is a `@validator` tag, the `@var` tag is always ignored.
+
+If you don't want any validation on a property, use the `any` validator.
 
 ```php
 use Samleybrize\Valoa\ValueObject\ValueObjectTrait;
@@ -160,11 +162,72 @@ private $var2;
 
 ### Enum validator
 
-to be written
+The enum validator allows you to define a list of accepted values with the `@enum` tag. Each allowed value should be scalar.
+
+```php
+/**
+ * This var accept integer 1, integer 5 and string "text".
+ * @var ...
+ * @validator enum
+ * @enum [1, 5, "text"]
+ */
+private $var;
+```
 
 ### Class constants validator
 
-to be written
+The class constants validator define a set of class constants as allowed values. The `@classname` tag specify the full class name that contains
+allowed class constants. By default, all class constants in that class are allowed. You can restrict allowed values with the followin options :
+
+- The `@contain` tag is a filter on the class constants names
+- The `@beginWith` tag is a filter on the beginning of class constants names
+- The `@endWith` tag is a filter on the end of class constants names
+
+```php
+class Test
+{
+    const TEST_NAME1   = 1;
+    const TEST_NAME2_P = 2;
+
+    const X_AZERTY3    = 3;
+    const X_AZERTY4_P  = 3;
+
+    /**
+     * Allow all class constants of the class 'Test'
+     * @var int
+     * @validator ClassConstants
+     * @classname Test
+     */
+    private $var1;
+
+    /**
+     * Allow TEST_NAME1 and TEST_NAME2_P
+     * @var int
+     * @validator ClassConstants
+     * @classname Test2
+     * @beginWith TEST_
+     */
+    private $var1;
+
+    /**
+     * Allow TEST_NAME2_P and X_NAME4_P
+     * @var int
+     * @validator ClassConstants
+     * @classname Test2
+     * @endWith _P
+     */
+    private $var1;
+
+    /**
+     * Allow TEST_NAME1 and TEST_NAME2_P
+     * @var int
+     * @validator ClassConstants
+     * @classname Test2
+     * @contain NAME
+     */
+    private $var1;
+}
+```
 
 ### Validator list
 
@@ -240,6 +303,26 @@ For a quick install with [Composer](https://getcomposer.org) use :
 ## Requirements
 
 - PHP 5.4+
+
+## Known limitations
+
+Array types can't be directly modified from outside. Instead, you have two workarounds :
+
+- Retrieve and modify the array externally then set the whole array
+- Create a method that modify the array from inside
+
+```php
+// will not work
+$object->array[] = 8;
+
+// workaround 1
+$array         = $object->array;
+$array[]       = 8;
+$object->array = $array;
+
+// workaround 2
+$object->addToArray(8);
+```
 
 ## Author
 
