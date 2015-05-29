@@ -14,6 +14,7 @@ namespace Samleybrize\Valoa\ValueObject;
 use Samleybrize\Valoa\AnnotationParser;
 use Samleybrize\Valoa\ValueObject\Validator\ValidatorArray;
 use Samleybrize\Valoa\ValueObject\Validator\ValidatorInterface;
+use Samleybrize\Valoa\ValueObject\Validator\ValidatorNullable;
 
 trait ValueObjectTrait
 {
@@ -96,6 +97,14 @@ trait ValueObjectTrait
             return $this->loadValueObjectValidator(array(
                 "validator" => array("immutable")
             ));
+        }
+
+        // handle nullable property
+        if (array_key_exists("nullable", $tags)) {
+            unset($tags["nullable"]);
+            $validatorObject    = $this->loadValueObjectValidator($tags);
+            $validatorObject    = new ValidatorNullable(array("validator" => $validatorObject));
+            return $validatorObject;
         }
 
         // handle array types
