@@ -16,6 +16,12 @@ use Samleybrize\Valoa\ValueObject\ValueObjectException;
 class ValidatorEnum implements ValidatorInterface
 {
     /**
+     * Indicates if validation is strict
+     * @var boolean
+     */
+    private $isStrict = false;
+
+    /**
      * Min length
      * @var mixed
      */
@@ -32,6 +38,10 @@ class ValidatorEnum implements ValidatorInterface
             throw new ValueObjectException("Tag 'enum:0' must be an array");
         }
 
+        if (array_key_exists("strict", $tags)) {
+            $this->isStrict = true;
+        }
+
         $this->allowedValues = $tags["enum"][0];
     }
 
@@ -40,7 +50,7 @@ class ValidatorEnum implements ValidatorInterface
      */
     public function isValid(&$value, $strict = false)
     {
-        if (!in_array($value, $this->allowedValues, true)) {
+        if (!in_array($value, $this->allowedValues, $this->isStrict)) {
             // validation failed
             $givenType  = ("object" == gettype($value)) ? get_class($value) : gettype($value);
             $value      = is_scalar($value) ? "[$givenType] '$value'" : "[$givenType]";
