@@ -160,7 +160,7 @@ trait ValueObjectTrait
         if (!array_key_exists($name, self::$valueObjectValidators)) {
             // undefined property
             throw new ValueObjectException("Undefined property: " . __CLASS__ . "::\$$name");
-        } elseif ($this->$name instanceof LazyLoaderInterface) {
+        } elseif ($this->$name instanceof ValueObjectLazyLoaderInterface) {
             // lazy load the value
             $this->__set($name, $this->$name->load());
         }
@@ -175,7 +175,7 @@ trait ValueObjectTrait
     {
         self::loadValueObjectValidators();
 
-        if (array_key_exists($name, self::$valueObjectValidators) && !($value instanceof LazyLoaderInterface)) {
+        if (array_key_exists($name, self::$valueObjectValidators) && !($value instanceof ValueObjectLazyLoaderInterface)) {
             // validate value
             self::$valueObjectValidators[$name]->isValid($value);
         }

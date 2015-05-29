@@ -11,7 +11,7 @@
 
 namespace Samleybrize\Valoa\ValueObject;
 
-interface LazyLoaderInterface
+interface ValueObjectLazyLoaderInterface
 {
     /**
      * Loads and return the value

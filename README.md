@@ -294,6 +294,10 @@ class EntityTest
 }
 ```
 
+### Lazy loaders
+
+to be written
+
 ## Installation
 
 For a quick install with [Composer](https://getcomposer.org) use :
