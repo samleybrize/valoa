@@ -116,11 +116,6 @@ $test->var1 = "text"; // will raise an exception
 
 ### Array types
 
-to be written
-@var string[]
-@var string[][]
-@var array, @validator string
-
 Array types can be specified in several ways. The simplest method is to add `[]` to the tag. This way you can also validate multidimensional arrays,
 by adding as many `[]` as you want.
 
