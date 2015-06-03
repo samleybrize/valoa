@@ -64,7 +64,8 @@ class ValidatorClassConstants extends ValidatorEnum
 
         // call parent constructor
         $parentTags = array(
-            "enum" => array($enum)
+            "enum"      => array($enum),
+            "strict"    => array(array_key_exists("strict", $tags))
         );
         parent::__construct($parentTags);
     }
