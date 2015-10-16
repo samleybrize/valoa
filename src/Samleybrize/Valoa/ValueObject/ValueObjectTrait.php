@@ -184,6 +184,8 @@ trait ValueObjectTrait
      */
     public function __get($name)
     {
+        self::loadValueObjectValidators();
+
         if (!array_key_exists($name, self::$valueObjectValidators)) {
             // undefined property
             throw new ValueObjectException("Undefined property: " . __CLASS__ . "::\$$name");
