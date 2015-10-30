@@ -64,31 +64,45 @@ trait ValueObjectTrait
 
         self::$valueObjectValidators    = array();
         $class                          = new \ReflectionClass($this);
-        $propertyList                   = $class->getProperties();
         $docParser                      = new AnnotationParser();
         $immutable                      = false;
 
         // handle immutable class
-        $classTags = $docParser->parse($class->getDocComment());
+        $c = $class;
 
-        if (array_key_exists("immutable", $classTags)) {
-            $immutable = $this->loadValueObjectValidator(array(
-                "validator" => array("immutable")
-            ));
-        }
+        do {
+            $classTags = $docParser->parse($c->getDocComment());
 
-        // properties
-        foreach ($propertyList as $property) {
-            // skip static properties
-            if ($property->isStatic()) {
-                continue;
+            if (array_key_exists("immutable", $classTags)) {
+                $immutable = $this->loadValueObjectValidator(array(
+                    "validator" => array("immutable")
+                ));
+
+                break;
             }
 
-            // create validator
-            $tags                                       = $docParser->parse($property->getDocComment());
-            $propertyName                               = $property->getName();
-            self::$valueObjectValidators[$propertyName] = !$immutable ? $this->loadValueObjectValidator($tags) : $immutable;
-        }
+            $c = $c->getParentClass();
+        } while ($c);
+
+        // properties
+        do {
+            $propertyList = $class->getProperties();
+
+            foreach ($propertyList as $property) {
+                // skip static properties
+                $propertyName = $property->getName();
+
+                if ($property->isStatic() || array_key_exists($propertyName, self::$valueObjectValidators)) {
+                    continue;
+                }
+
+                // create validator
+                $tags                                       = $docParser->parse($property->getDocComment());
+                self::$valueObjectValidators[$propertyName] = !$immutable ? $this->loadValueObjectValidator($tags) : $immutable;
+            }
+
+            $class = $class->getParentClass();
+        } while ($class);
     }
 
     /**
