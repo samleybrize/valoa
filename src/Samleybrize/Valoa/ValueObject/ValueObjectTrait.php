@@ -97,7 +97,12 @@ trait ValueObjectTrait
                 }
 
                 // create validator
-                $tags                                       = $docParser->parse($property->getDocComment());
+                $tags = $docParser->parse($property->getDocComment());
+
+                if (array_key_exists("exclude", $tags)) {
+                    continue;
+                }
+
                 self::$valueObjectValidators[$propertyName] = !$immutable ? $this->loadValueObjectValidator($tags) : $immutable;
             }
 
