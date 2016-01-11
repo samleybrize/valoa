@@ -236,6 +236,8 @@ trait ValueObjectTrait
      */
     public function __clone()
     {
+        self::loadValueObjectValidators();
+
         // lazy loaders can cause troubles on cloned objects so we resolve all of them
         foreach (self::$valueObjectValidators as $name => $value) {
             $this->__get($name);
