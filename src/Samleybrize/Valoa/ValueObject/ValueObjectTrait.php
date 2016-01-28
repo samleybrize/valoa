@@ -195,6 +195,8 @@ trait ValueObjectTrait
      */
     public function __isset($name)
     {
+        self::loadValueObjectValidators();
+
         return array_key_exists($name, self::$valueObjectValidators);
     }
 
